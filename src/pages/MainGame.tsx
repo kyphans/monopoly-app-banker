@@ -5,8 +5,9 @@ import { Modal } from '../components/ui/Modal';
 import { Button } from '../components/ui/Button';
 import { DragOverlay } from '../components/DragOverlay';
 import { useGameStore } from '../store/useGameStore';
-import { ArrowRight, Landmark } from 'lucide-react';
+import { ArrowRight, Landmark, Zap } from 'lucide-react';
 import type { PanInfo } from 'framer-motion';
+import { WheelPicker } from '../components/ui/WheelPicker';
 
 interface MainGameProps {
   onBankrupt: (playerId: number) => void;
@@ -341,23 +342,35 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
               </div>
             </div>
           </div>
-
-          <div>
-            <label className='block text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-3 text-center'>
-              Quick Select
-            </label>
-            <div className='grid grid-cols-5 gap-2'>
-              {[10, 50, 100, 200, 500].map((val) => (
-                <button
-                  key={val}
-                  onClick={() => setAmount(val.toString())}
-                  className='py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold hover:bg-primary hover:text-black transition-all active:scale-90 dark:text-slate-300'>
-                  {val}
-                </button>
-              ))}
-            </div>
+          <div className='mb-6'>
+            <button
+              onClick={() => setAmount('200')}
+              className='w-full bg-primary hover:bg-primary/90 text-black py-4 rounded-2xl flex items-center justify-center space-x-3 shadow-[0_8px_20px_-4px_rgba(19,236,91,0.3)] active:scale-[0.98] transition-all group overflow-hidden relative'>
+              <div className='absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out'></div>
+              <Zap size={22} fill='currentColor' className='animate-pulse' />
+              <div className='flex flex-col items-start leading-tight'>
+                <span className='text-[9px] font-black uppercase tracking-widest opacity-60'>
+                  Collect Bonus
+                </span>
+                <span className='text-sm font-black uppercase'>
+                  GO! Pass Start +200
+                </span>
+              </div>
+            </button>
           </div>
 
+          <div>
+            <div className='bg-slate-50 dark:bg-slate-800/20 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden'>
+              <WheelPicker
+                options={[
+                  10, 20, 50, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600,
+                  650, 700, 750, 800, 850, 900, 950, 1000
+                ]}
+                value={parseInt(amount) || 0}
+                onChange={(val: number) => setAmount(val.toString())}
+              />
+            </div>
+          </div>
           <div className='relative pt-4'>
             <label className='absolute top-0 left-1/2 -translate-x-1/2 text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] bg-white dark:bg-slate-900 px-4'>
               Amount
@@ -373,7 +386,6 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
               />
             </div>
           </div>
-
           <Button
             onClick={handleTransfer}
             size='xl'
