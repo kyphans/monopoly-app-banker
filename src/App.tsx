@@ -48,12 +48,12 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className='h-screen w-screen flex flex-col relative overflow-hidden font-sans'>
+    <div className='h-dvh w-screen flex flex-col relative overflow-hidden font-sans bg-background-light dark:bg-background-dark'>
       {/* Top Navigation Overlay */}
-      <div className='absolute top-0 w-full z-50 flex justify-between items-center py-2 px-4 pointer-events-none'>
+      <div className='absolute top-[env(safe-area-inset-top)] w-full z-50 flex justify-between items-center py-2 px-4 pointer-events-none'>
         <button
           onClick={() => setIsSidebarOpen(true)}
-          className='w-12 h-12 flex items-center justify-center bg-white/10 ios-blur border border-white/20 rounded-full text-white active:scale-90 transition-transform pointer-events-auto shadow-xl'>
+          className='w-12 h-12 mt-2 flex items-center justify-center bg-white/10 ios-blur border border-white/20 rounded-full text-white active:scale-90 transition-transform pointer-events-auto shadow-xl'>
           <Menu size={24} />
         </button>
       </div>
@@ -65,7 +65,7 @@ const App: React.FC = () => {
         onNavigate={setActiveScreen}
       />
 
-      <main className='flex-1 overflow-hidden flex flex-col'>
+      <main className='flex-1 overflow-hidden flex flex-col pb-[env(safe-area-inset-bottom)]'>
         {renderScreen()}
       </main>
     </div>

@@ -28,8 +28,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         onClick={onClose}
       />
       <nav
-        className={`fixed inset-y-0 left-0 w-72 bg-white dark:bg-[#0f151c] z-[120] shadow-2xl transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className='p-8 pt-16 h-full flex flex-col'>
+        className={`fixed inset-y-0 left-0 w-72 h-dvh bg-white dark:bg-[#0f151c] z-[120] shadow-2xl transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className='p-8 pt-[calc(env(safe-area-inset-top)+2rem)] pb-[env(safe-area-inset-bottom)] h-full flex flex-col'>
           <div className='flex items-center space-x-4 mb-12'>
             <div className='w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-black'>
               <span className='material-symbols-outlined text-3xl'>
