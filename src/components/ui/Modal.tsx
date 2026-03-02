@@ -16,13 +16,23 @@ export const Modal: React.FC<ModalProps> = ({
 }) => {
   const [mounted, setMounted] = useState(false);
 
+  // If the modal is opened, we want to mount it immediately during the render phase
+  // to avoid a "cascading render" (render -> effect -> render cycle).
+  if (isOpen && !mounted) {
+    setMounted(true);
+  }
+
   useEffect(() => {
     if (isOpen) {
-      setMounted(true);
+      document.body.style.overflow = 'hidden';
     } else {
+      document.body.style.overflow = '';
       const timer = setTimeout(() => setMounted(false), 300);
       return () => clearTimeout(timer);
     }
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [isOpen]);
 
   if (!mounted) return null;
