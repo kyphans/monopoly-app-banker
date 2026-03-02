@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Updated Game Settings Design</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "monopoly-blue": "#3b82f6",
+                        "monopoly-red": "#ef4444",
+                        "monopoly-green": "#22c55e",
+                        "monopoly-yellow": "#eab308",
+                        "monopoly-purple": "#a855f7",
+                        "monopoly-orange": "#f97316",
+                        "surface": "#ffffff",
+                        "background": "#f8fafc",
+                    },
+                    fontFamily: {
+                        "sans": ["Plus Jakarta Sans", "Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "2xl": "1.25rem",
+                        "3xl": "1.75rem",
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-background text-slate-900 antialiased;
+                -webkit-tap-highlight-color: transparent;
+            }
+        }
+        .color-radio:checked + .color-ring {
+            @apply ring-4 ring-offset-2;
+        }
+        .player-card {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-sans">
+<div class="relative flex min-h-screen w-full flex-col">
+<header class="sticky top-0 z-30 bg-white/80 backdrop-blur-lg border-b border-slate-100 px-4 h-16 flex items-center justify-between">
+<button class="flex items-center justify-center h-10 w-10 rounded-full hover:bg-slate-100 active:scale-90 transition-all">
+<span class="material-symbols-outlined text-[28px] text-slate-700">menu</span>
+</button>
+<h1 class="text-slate-900 text-lg font-extrabold tracking-tight">Game Settings</h1>
+<div class="w-10"></div> 
+</header>
+<main class="flex-1 px-4 py-6 pb-32 space-y-6">
+<section class="player-card bg-white rounded-3xl p-6 border border-slate-100">
+<div class="flex flex-col items-center mb-6">
+<div class="size-20 bg-monopoly-blue/10 text-monopoly-blue rounded-full flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-4xl font-bold">person</span>
+</div>
+<h2 class="text-slate-900 font-bold text-xl">Player 1</h2>
+</div>
+<div class="space-y-5">
+<div>
+<label class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2 block px-1">Player Name</label>
+<input class="w-full bg-slate-50 border-none rounded-2xl h-14 px-5 font-semibold text-slate-900 focus:ring-2 focus:ring-primary placeholder:text-slate-300" placeholder="Enter name" type="text" value="Banker"/>
+</div>
+<div>
+<label class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-3 block px-1">Theme Color</label>
+<div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl">
+<label class="relative cursor-pointer">
+<input checked="" class="hidden color-radio" name="p1-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-blue color-ring ring-monopoly-blue transition-all"></div>
+</label>
+<label class="relative cursor-pointer">
+<input class="hidden color-radio" name="p1-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-red color-ring ring-monopoly-red transition-all"></div>
+</label>
+<label class="relative cursor-pointer">
+<input class="hidden color-radio" name="p1-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-green color-ring ring-monopoly-green transition-all"></div>
+</label>
+<label class="relative cursor-pointer">
+<input class="hidden color-radio" name="p1-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-yellow color-ring ring-monopoly-yellow transition-all"></div>
+</label>
+<label class="relative cursor-pointer">
+<input class="hidden color-radio" name="p1-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-purple color-ring ring-monopoly-purple transition-all"></div>
+</label>
+<label class="relative cursor-pointer">
+<input class="hidden color-radio" name="p1-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-orange color-ring ring-monopoly-orange transition-all"></div>
+</label>
+</div>
+</div>
+<div>
+<label class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2 block px-1">Starting Cash</label>
+<div class="relative">
+<span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xl">$</span>
+<input class="w-full bg-slate-50 border-none rounded-2xl h-14 pl-10 pr-5 font-bold text-slate-900 focus:ring-2 focus:ring-primary" placeholder="0" type="number" value="1500"/>
+</div>
+</div>
+</div>
+</section>
+<section class="player-card bg-white rounded-3xl p-6 border border-slate-100">
+<div class="flex flex-col items-center mb-6">
+<div class="size-20 bg-monopoly-red/10 text-monopoly-red rounded-full flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-4xl font-bold">person</span>
+</div>
+<h2 class="text-slate-900 font-bold text-xl">Player 2</h2>
+</div>
+<div class="space-y-5">
+<div>
+<label class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2 block px-1">Player Name</label>
+<input class="w-full bg-slate-50 border-none rounded-2xl h-14 px-5 font-semibold text-slate-900 focus:ring-2 focus:ring-primary placeholder:text-slate-300" placeholder="Enter name" type="text" value="Player 2"/>
+</div>
+<div>
+<label class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-3 block px-1">Theme Color</label>
+<div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl">
+<label class="relative cursor-pointer">
+<input class="hidden color-radio" name="p2-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-blue color-ring ring-monopoly-blue transition-all"></div>
+</label>
+<label class="relative cursor-pointer">
+<input checked="" class="hidden color-radio" name="p2-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-red color-ring ring-monopoly-red transition-all"></div>
+</label>
+<label class="relative cursor-pointer">
+<input class="hidden color-radio" name="p2-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-green color-ring ring-monopoly-green transition-all"></div>
+</label>
+<label class="relative cursor-pointer">
+<input class="hidden color-radio" name="p2-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-yellow color-ring ring-monopoly-yellow transition-all"></div>
+</label>
+<label class="relative cursor-pointer">
+<input class="hidden color-radio" name="p2-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-purple color-ring ring-monopoly-purple transition-all"></div>
+</label>
+<label class="relative cursor-pointer">
+<input class="hidden color-radio" name="p2-color" type="radio"/>
+<div class="size-9 rounded-full bg-monopoly-orange color-ring ring-monopoly-orange transition-all"></div>
+</label>
+</div>
+</div>
+<div>
+<label class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2 block px-1">Starting Cash</label>
+<div class="relative">
+<span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xl">$</span>
+<input class="w-full bg-slate-50 border-none rounded-2xl h-14 pl-10 pr-5 font-bold text-slate-900 focus:ring-2 focus:ring-primary" placeholder="0" type="number" value="1500"/>
+</div>
+</div>
+</div>
+</section>
+</main>
+<div class="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-xl border-t border-slate-100 z-40">
+<button class="w-full bg-primary text-black font-extrabold text-lg h-16 rounded-2xl shadow-[0_8px_20px_-4px_rgba(19,236,91,0.4)] flex items-center justify-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined font-bold">restart_alt</span>
+                Save &amp; Reset Game
+            </button>
+</div>
+</div>
+
+</body></html>
