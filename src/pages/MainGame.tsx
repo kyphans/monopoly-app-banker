@@ -274,14 +274,11 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title='Confirm Transaction'>
-        <div className='space-y-6'>
-          <div className='space-y-3'>
-            <div className='flex items-center justify-between p-5 bg-slate-50 dark:bg-slate-800/50 rounded-4xl border border-slate-100 dark:border-slate-800 shadow-inner'>
+        <div className='space-y-2'>
+          <div>
+            <div className='flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-4xl border border-slate-100 dark:border-slate-800 shadow-inner'>
               {/* From Participant */}
               <div className='flex flex-col items-center justify-center flex-1'>
-                <span className='text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3'>
-                  From
-                </span>
                 <div className='flex flex-col items-center space-y-2'>
                   <div
                     className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black shadow-lg ${fromStyle.bg} ${fromStyle.shadow}`}>
@@ -314,9 +311,6 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
 
               {/* To Participant */}
               <div className='flex flex-col items-center justify-center flex-1'>
-                <span className='text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3'>
-                  To
-                </span>
                 <div className='flex flex-col items-center space-y-2'>
                   <div
                     className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black shadow-lg ${toStyle.bg} ${toStyle.shadow}`}>
@@ -342,7 +336,7 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
               </div>
             </div>
           </div>
-          <div className='mb-6'>
+          <div className='mb-2'>
             <button
               onClick={() => setAmount('200')}
               className='w-full bg-primary hover:bg-primary/90 text-black py-4 rounded-2xl flex items-center justify-center space-x-3 shadow-[0_8px_20px_-4px_rgba(19,236,91,0.3)] active:scale-[0.98] transition-all group overflow-hidden relative'>
