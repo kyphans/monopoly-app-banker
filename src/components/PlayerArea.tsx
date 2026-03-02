@@ -10,43 +10,76 @@ interface PlayerAreaProps {
     color: string;
   };
   reverse?: boolean;
-  onDragStart?: (e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
+  onDragStart?: (
+    e: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => void;
   onDrag?: (e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
-  onDragEnd?: (e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
+  onDragEnd?: (
+    e: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => void;
 }
 
-export const PlayerArea: React.FC<PlayerAreaProps> = ({ 
-  player, 
-  reverse = false, 
-  onDragStart, 
-  onDrag, 
-  onDragEnd 
+export const PlayerArea: React.FC<PlayerAreaProps> = ({
+  player,
+  reverse = false,
+  onDragStart,
+  onDrag,
+  onDragEnd
 }) => {
   const avatarRef = useRef<HTMLDivElement>(null);
 
+  const colorMap: Record<string, string> = {
+    blue: 'bg-blue-600 dark:bg-blue-700',
+    red: 'bg-rose-600 dark:bg-rose-700',
+    green: 'bg-green-600 dark:bg-green-700',
+    yellow: 'bg-amber-500 dark:bg-amber-600',
+    purple: 'bg-purple-600 dark:bg-purple-700',
+    orange: 'bg-orange-600 dark:bg-orange-700'
+  };
+
+  const bgColorClass = colorMap[player.color] || 'bg-slate-600';
+
   return (
-    <div className={`flex-1 ${player.color} flex flex-col items-center justify-center p-6 relative overflow-hidden transition-colors duration-500`}>
-      <div className="absolute inset-0 opacity-40 pointer-events-none">
-        <svg height="100%" width="100%">
+    <div
+      className={`flex-1 ${bgColorClass} flex flex-col items-center justify-center p-6 relative overflow-hidden transition-colors duration-500`}>
+      <div className='absolute inset-0 opacity-20 pointer-events-none'>
+        <svg height='100%' width='100%'>
           <defs>
-            <pattern id={`grid-${player.id}`} width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
+            <pattern
+              id={`grid-${player.id}`}
+              width='40'
+              height='40'
+              patternUnits='userSpaceOnUse'>
+              <path
+                d='M 40 0 L 0 0 0 40'
+                fill='none'
+                stroke='white'
+                strokeWidth='1'
+              />
             </pattern>
           </defs>
-          <rect width="100%" height="100%" fill={`url(#grid-${player.id})`} />
+          <rect width='100%' height='100%' fill={`url(#grid-${player.id})`} />
         </svg>
       </div>
 
-      <div className={`relative z-10 flex flex-col items-center text-center ${reverse ? 'flex-col-reverse' : 'flex-col'}`}>
-        <div className={`${reverse ? 'mt-4' : 'mb-4'} px-6 py-2 bg-black/20 ios-blur rounded-full border border-white/10 shadow-lg`}>
-          <span className="text-white text-3xl font-mono font-bold leading-none">${player.balance.toLocaleString()}</span>
-        </div>
-        
-        <div className="flex flex-col items-center">
-          <p className="text-white text-3xl font-bold tracking-tight">{player.name}</p>
+      <div
+        className={`relative z-10 flex flex-col items-center text-center ${reverse ? 'flex-col-reverse' : 'flex-col'}`}>
+        <div
+          className={`${reverse ? 'mt-4' : 'mb-4'} px-6 py-2 bg-black/20 ios-blur rounded-full border border-white/10 shadow-lg`}>
+          <span className='text-white text-3xl font-mono font-bold leading-none'>
+            ${player.balance.toLocaleString()}
+          </span>
         </div>
 
-        <motion.div 
+        <div className='flex flex-col items-center'>
+          <p className='text-white text-3xl font-bold tracking-tight'>
+            {player.name}
+          </p>
+        </div>
+
+        <motion.div
           ref={avatarRef}
           drag
           dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
@@ -54,9 +87,10 @@ export const PlayerArea: React.FC<PlayerAreaProps> = ({
           onDragStart={onDragStart}
           onDrag={onDrag}
           onDragEnd={onDragEnd}
-          className={`relative w-32 h-32 bg-white/20 rounded-full flex items-center justify-center ${reverse ? 'mb-4' : 'mt-4'} ios-blur border-2 border-white/30 shadow-2xl active:scale-95 transition-transform cursor-grab active:cursor-grabbing overflow-hidden z-20`}
-        >
-          <span className="material-symbols-outlined text-7xl text-white select-none">account_circle</span>
+          className={`relative w-32 h-32 bg-white/20 rounded-full flex items-center justify-center ${reverse ? 'mb-4' : 'mt-4'} ios-blur border-2 border-white/30 shadow-2xl active:scale-95 transition-transform cursor-grab active:cursor-grabbing overflow-hidden z-20`}>
+          <span className='material-symbols-outlined text-7xl text-white select-none'>
+            account_circle
+          </span>
         </motion.div>
       </div>
     </div>
