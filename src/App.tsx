@@ -6,8 +6,10 @@ import { Settings } from './pages/Settings';
 import { Bankruptcy } from './pages/Bankruptcy';
 import { Menu } from 'lucide-react';
 import { useGameStore } from './store/useGameStore';
+import { useFullscreen } from './hooks/useFullscreen';
 
 const App: React.FC = () => {
+  useFullscreen();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeScreen, setActiveScreen] = useState('game');
   const [bankruptPlayerId, setBankruptPlayerId] = useState<number | null>(null);
