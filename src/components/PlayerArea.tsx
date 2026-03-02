@@ -2,12 +2,15 @@ import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { PanInfo } from 'framer-motion';
 
+import { TrendingUp, TrendingDown, User } from 'lucide-react';
+
 interface PlayerAreaProps {
   player: {
     id: number;
     name: string;
     balance: number;
     color: string;
+    lastChange: number | null;
   };
   reverse?: boolean;
   onDragStart?: (
@@ -67,14 +70,28 @@ export const PlayerArea: React.FC<PlayerAreaProps> = ({
       <div
         className={`relative z-10 flex flex-col items-center text-center ${reverse ? 'flex-col-reverse' : 'flex-col'}`}>
         <div
-          className={`${reverse ? 'mt-4' : 'mb-4'} px-6 py-2 bg-black/20 ios-blur rounded-full border border-white/10 shadow-lg`}>
+          className={`${reverse ? 'mt-3' : 'mb-3'} px-6 py-2 bg-black/20 ios-blur rounded-full border border-white/10 shadow-lg flex items-center space-x-3`}>
           <span className='text-white text-3xl font-mono font-bold leading-none'>
             ${player.balance.toLocaleString()}
           </span>
+          {player.lastChange !== null && (
+            <div
+              className={`flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${player.lastChange > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
+              {player.lastChange > 0 ? (
+                <TrendingUp size={12} strokeWidth={3} />
+              ) : (
+                <TrendingDown size={12} strokeWidth={3} />
+              )}
+              <span>
+                {player.lastChange > 0 ? '+' : ''}
+                {player.lastChange}
+              </span>
+            </div>
+          )}
         </div>
 
         <div className='flex flex-col items-center'>
-          <p className='text-white text-3xl font-bold tracking-tight'>
+          <p className='text-white text-xl font-bold tracking-tight'>
             {player.name}
           </p>
         </div>
@@ -88,9 +105,11 @@ export const PlayerArea: React.FC<PlayerAreaProps> = ({
           onDrag={onDrag}
           onDragEnd={onDragEnd}
           className={`relative w-32 h-32 bg-white/20 rounded-full flex items-center justify-center ${reverse ? 'mb-4' : 'mt-4'} ios-blur border-2 border-white/30 shadow-2xl active:scale-95 transition-transform cursor-grab active:cursor-grabbing overflow-hidden z-20`}>
-          <span className='material-symbols-outlined text-7xl text-white select-none'>
-            account_circle
-          </span>
+          <User
+            size={80}
+            strokeWidth={1.5}
+            className='text-white select-none'
+          />
         </motion.div>
       </div>
     </div>

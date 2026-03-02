@@ -6,6 +6,7 @@ interface Player {
   name: string;
   balance: number;
   color: string;
+  lastChange: number | null;
 }
 
 interface GameConfig {
@@ -37,15 +38,15 @@ export const useGameStore = create<GameState>()(
   persist(
     (set) => ({
       players: [
-        { id: 1, name: 'Player 1', balance: 1500, color: 'blue' },
-        { id: 2, name: 'Player 2', balance: 1500, color: 'red' },
+        { id: 1, name: 'Player 1', balance: 1500, color: 'blue', lastChange: null },
+        { id: 2, name: 'Player 2', balance: 1500, color: 'red', lastChange: null },
       ],
       gameConfig: {
         startingCash: 1500,
       },
       transactions: [],
       setBalance: (id, amount) => set((state) => ({
-        players: state.players.map(p => p.id === id ? { ...p, balance: amount } : p)
+        players: state.players.map(p => p.id === id ? { ...p, balance: amount, lastChange: amount - p.balance } : p)
       })),
       transferMoney: (fromId, toId, amount) => set((state) => {
         const fromName = fromId === 'bank' ? 'The Bank' : state.players.find(p => p.id === fromId)?.name || '';
@@ -53,9 +54,16 @@ export const useGameStore = create<GameState>()(
 
         const newPlayers = state.players.map(p => {
           let newBalance = p.balance;
-          if (fromId !== 'bank' && p.id === fromId) newBalance -= amount;
-          if (toId !== 'bank' && p.id === toId) newBalance += amount;
-          return { ...p, balance: newBalance };
+          let lastChange = p.lastChange;
+          if (fromId !== 'bank' && p.id === fromId) {
+            newBalance -= amount;
+            lastChange = -amount;
+          }
+          if (toId !== 'bank' && p.id === toId) {
+            newBalance += amount;
+            lastChange = amount;
+          }
+          return { ...p, balance: newBalance, lastChange };
         });
 
         return {
@@ -82,7 +90,7 @@ export const useGameStore = create<GameState>()(
         gameConfig: { ...state.gameConfig, startingCash: amount }
       })),
       resetGame: () => set((state) => ({
-        players: state.players.map(p => ({ ...p, balance: state.gameConfig.startingCash })),
+        players: state.players.map(p => ({ ...p, balance: state.gameConfig.startingCash, lastChange: null })),
         transactions: []
       })),
       clearTransactions: () => set({ transactions: [] }),

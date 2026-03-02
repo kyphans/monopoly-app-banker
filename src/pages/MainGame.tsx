@@ -8,6 +8,7 @@ import { useGameStore } from '../store/useGameStore';
 import { ArrowRight, Landmark, Zap } from 'lucide-react';
 import type { PanInfo } from 'framer-motion';
 import { WheelPicker } from '../components/ui/WheelPicker';
+import Confetti from 'react-confetti';
 
 interface MainGameProps {
   onBankrupt: (playerId: number) => void;
@@ -17,6 +18,20 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
   const { players, transferMoney } = useGameStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [amount, setAmount] = useState('');
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [confettiKey, setConfettiKey] = useState(0);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     players.forEach((player) => {
@@ -241,6 +256,16 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
 
   return (
     <div className='flex-1 flex flex-col h-full bg-background-dark relative select-none'>
+      <Confetti
+        key={confettiKey}
+        width={windowSize.width}
+        height={windowSize.height}
+        numberOfPieces={showConfetti ? 200 : 0}
+        recycle={false}
+        onConfettiComplete={() => setShowConfetti(false)}
+        style={{ zIndex: 1000, position: 'fixed', top: 0, left: 0 }}
+      />
+
       <PlayerArea
         player={players[0]}
         reverse={true}
@@ -336,29 +361,34 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
               </div>
             </div>
           </div>
-          <div className='mb-2'>
-            <button
-              onClick={() => setAmount('200')}
-              className='w-full bg-primary hover:bg-primary/90 text-black py-4 rounded-2xl flex items-center justify-center space-x-3 shadow-[0_8px_20px_-4px_rgba(19,236,91,0.3)] active:scale-[0.98] transition-all group overflow-hidden relative'>
-              <div className='absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out'></div>
-              <Zap size={22} fill='currentColor' className='animate-pulse' />
-              <div className='flex flex-col items-start leading-tight'>
-                <span className='text-[9px] font-black uppercase tracking-widest opacity-60'>
-                  Collect Bonus
-                </span>
-                <span className='text-sm font-black uppercase'>
-                  GO! Pass Start +200
-                </span>
-              </div>
-            </button>
-          </div>
+          {(transferType === 'bank-to-p1' || transferType === 'bank-to-p2') && (
+            <div className='mb-2'>
+              <button
+                onClick={() => {
+                  setAmount('200');
+                  setConfettiKey((prev) => prev + 1);
+                  setShowConfetti(true);
+                }}
+                className='w-full bg-primary hover:bg-primary/90 text-black py-4 rounded-2xl flex items-center justify-center space-x-3 shadow-[0_8px_20px_-4px_rgba(19,236,91,0.3)] active:scale-[0.98] transition-all group overflow-hidden relative'>
+                <div className='absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out'></div>
+                <Zap size={22} fill='currentColor' className='animate-pulse' />
+                <div className='flex flex-col items-start leading-tight'>
+                  <span className='text-[9px] font-black uppercase tracking-widest opacity-60'>
+                    Collect Bonus
+                  </span>
+                  <span className='text-sm font-black uppercase'>
+                    GO! Pass Start +200
+                  </span>
+                </div>
+              </button>
+            </div>
+          )}
 
           <div>
             <div className='bg-slate-50 dark:bg-slate-800/20 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden'>
               <WheelPicker
                 options={[
-                  10, 20, 50, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600,
-                  650, 700, 750, 800, 850, 900, 950, 1000
+                  10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500
                 ]}
                 value={parseInt(amount) || 0}
                 onChange={(val: number) => setAmount(val.toString())}
