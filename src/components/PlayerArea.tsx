@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import type { PanInfo } from 'framer-motion';
 
 import { TrendingUp, TrendingDown, User } from 'lucide-react';
+import { NumberTicker } from './ui/number-ticker';
+import { TRANSFER_ANIMATION_DURATION } from '../constants/animations';
 
 interface PlayerAreaProps {
   player: {
@@ -71,8 +73,13 @@ export const PlayerArea: React.FC<PlayerAreaProps> = ({
         className={`relative z-10 flex flex-col items-center text-center ${reverse ? 'flex-col-reverse' : 'flex-col'}`}>
         <div
           className={`${reverse ? 'mt-3' : 'mb-3'} px-6 py-2 bg-black/20 ios-blur rounded-full border border-white/10 shadow-lg flex items-center space-x-3`}>
-          <span className='text-white text-3xl font-mono font-bold leading-none'>
-            ${player.balance.toLocaleString()}
+          <span className='text-white text-3xl font-mono font-bold leading-none flex items-center'>
+            $
+            <NumberTicker
+              value={player.balance}
+              className='text-white text-3xl font-mono font-bold leading-none'
+              duration={TRANSFER_ANIMATION_DURATION}
+            />
           </span>
           {player.lastChange !== null && (
             <div
@@ -82,9 +89,9 @@ export const PlayerArea: React.FC<PlayerAreaProps> = ({
               ) : (
                 <TrendingDown size={12} strokeWidth={3} />
               )}
-              <span>
+              <span className='flex items-center'>
                 {player.lastChange > 0 ? '+' : ''}
-                {player.lastChange}
+                {Math.abs(player.lastChange)}
               </span>
             </div>
           )}

@@ -1,0 +1,1 @@
+export const TRANSFER_ANIMATION_DURATION = 1200; // ms

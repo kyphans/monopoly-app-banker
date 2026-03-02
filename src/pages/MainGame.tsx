@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { PlayerArea } from '../components/PlayerArea';
 import { BankCenter } from '../components/BankCenter';
-import { Modal } from '../components/ui/Modal';
-import { Button } from '../components/ui/Button';
 import { DragOverlay } from '../components/DragOverlay';
 import { useGameStore } from '../store/useGameStore';
-import { ArrowRight, Landmark, Zap } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { PanInfo } from 'framer-motion';
-import { WheelPicker } from '../components/ui/WheelPicker';
 import Confetti from 'react-confetti';
+import { TransactionModal } from '../components/TransactionModal';
+import { TRANSFER_ANIMATION_DURATION } from '../constants/animations';
 
 interface MainGameProps {
   onBankrupt: (playerId: number) => void;
@@ -17,9 +16,13 @@ interface MainGameProps {
 export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
   const { players, transferMoney } = useGameStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [amount, setAmount] = useState('');
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiKey, setConfettiKey] = useState(0);
+  const [isAnimatingTransfer, setIsAnimatingTransfer] = useState(false);
+  const [animationPath, setAnimationPath] = useState<{
+    from: string;
+    to: string;
+  } | null>(null);
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight
@@ -157,10 +160,7 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
     });
   };
 
-  const handleTransfer = () => {
-    const value = parseInt(amount);
-    if (!value || value <= 0) return;
-
+  const handleConfirmTransfer = (value: number) => {
     let sourcePlayerIdx = -1;
     if (transferType.startsWith('p1')) sourcePlayerIdx = 0;
     else if (transferType.startsWith('p2')) sourcePlayerIdx = 1;
@@ -184,7 +184,6 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
           );
           onBankrupt(sourcePlayer.id);
           setIsModalOpen(false);
-          setAmount('');
           return;
         }
       }
@@ -197,62 +196,31 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
     else if (transferType === 'bank-to-p1') transferMoney('bank', 1, value);
     else if (transferType === 'bank-to-p2') transferMoney('bank', 2, value);
 
-    setAmount('');
+    const match = transferType.match(/^(.+)-to-(.+)$/);
+    if (match) {
+      setAnimationPath({ from: match[1], to: match[2] });
+      setIsAnimatingTransfer(true);
+      setTimeout(
+        () => setIsAnimatingTransfer(false),
+        TRANSFER_ANIMATION_DURATION + 500
+      ); // Buffer for last money element
+    }
+
     setIsModalOpen(false);
   };
 
-  const colorMap: Record<string, { bg: string; text: string; shadow: string }> =
-    {
-      blue: {
-        bg: 'bg-blue-500',
-        text: 'text-blue-500',
-        shadow: 'shadow-blue-500/20'
-      },
-      red: {
-        bg: 'bg-rose-500',
-        text: 'text-rose-500',
-        shadow: 'shadow-rose-500/20'
-      },
-      green: {
-        bg: 'bg-green-500',
-        text: 'text-green-500',
-        shadow: 'shadow-green-500/20'
-      },
-      yellow: {
-        bg: 'bg-amber-500',
-        text: 'text-amber-500',
-        shadow: 'shadow-amber-500/20'
-      },
-      purple: {
-        bg: 'bg-purple-500',
-        text: 'text-purple-500',
-        shadow: 'shadow-purple-500/20'
-      },
-      orange: {
-        bg: 'bg-orange-500',
-        text: 'text-orange-500',
-        shadow: 'shadow-orange-500/20'
-      }
-    };
-
-  const getParticipantStyle = (isP1: boolean, isP2: boolean) => {
-    if (isP1) return colorMap[players[0].color] || colorMap.blue;
-    if (isP2) return colorMap[players[1].color] || colorMap.red;
-    return {
-      bg: 'bg-amber-600',
-      text: 'text-amber-600 dark:text-amber-500',
-      shadow: 'shadow-amber-600/20'
-    };
+  const getPosition = (participant: string) => {
+    const w = windowSize.width;
+    const h = windowSize.height;
+    if (participant === 'p1') return { x: w / 2, y: h * 0.2 };
+    if (participant === 'p2') return { x: w / 2, y: h * 0.8 };
+    if (participant === 'bank') return { x: w / 2, y: h * 0.5 };
+    return { x: 0, y: 0 };
   };
 
-  const fromStyle = getParticipantStyle(
-    transferType.startsWith('p1'),
-    transferType.startsWith('p2')
-  );
-  const toStyle = getParticipantStyle(
-    transferType.endsWith('p1'),
-    transferType.endsWith('p2')
-  );
+  const pathData = animationPath
+    ? `M ${getPosition(animationPath.from).x} ${getPosition(animationPath.from).y} L ${getPosition(animationPath.to).x} ${getPosition(animationPath.to).y}`
+    : '';
 
   return (
     <div className='flex-1 flex flex-col h-full bg-background-dark relative select-none'>
@@ -265,6 +233,37 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
         onConfettiComplete={() => setShowConfetti(false)}
         style={{ zIndex: 1000, position: 'fixed', top: 0, left: 0 }}
       />
+
+      <AnimatePresence>
+        {isAnimatingTransfer && animationPath && (
+          <div className='fixed inset-0 z-[150] pointer-events-none'>
+            {[0, 1, 2].map((i) => (
+              <motion.img
+                key={i}
+                src='/money.png'
+                alt='money'
+                className='w-12 h-12 absolute object-contain drop-shadow-xl'
+                initial={{ offsetDistance: '0%', opacity: 0, scale: 0.5 }}
+                animate={{
+                  offsetDistance: '100%',
+                  opacity: [0, 1, 1, 0],
+                  scale: [0.5, 1.2, 1],
+                  rotate: [0, 15, -15, 0]
+                }}
+                transition={{
+                  duration: TRANSFER_ANIMATION_DURATION / 1000,
+                  delay: i * 0.2,
+                  ease: 'easeInOut'
+                }}
+                style={{
+                  offsetPath: `path("${pathData}")`,
+                  offsetRotate: 'auto 0deg'
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </AnimatePresence>
 
       <PlayerArea
         player={players[0]}
@@ -295,129 +294,17 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
         targetLabel={getTargetLabel(dragInfo.target)}
       />
 
-      <Modal
+      <TransactionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title='Confirm Transaction'>
-        <div className='space-y-2'>
-          <div>
-            <div className='flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-4xl border border-slate-100 dark:border-slate-800 shadow-inner'>
-              {/* From Participant */}
-              <div className='flex flex-col items-center justify-center flex-1'>
-                <div className='flex flex-col items-center space-y-2'>
-                  <div
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black shadow-lg ${fromStyle.bg} ${fromStyle.shadow}`}>
-                    {transferType.startsWith('p1') ? (
-                      players[0].name.charAt(0)
-                    ) : transferType.startsWith('p2') ? (
-                      players[1].name.charAt(0)
-                    ) : (
-                      <Landmark size={24} />
-                    )}
-                  </div>
-                  <div className='text-center overflow-hidden w-full px-1'>
-                    <p
-                      className={`text-[10px] font-black uppercase truncate tracking-tight ${fromStyle.text}`}>
-                      {transferType.startsWith('p1')
-                        ? players[0].name
-                        : transferType.startsWith('p2')
-                          ? players[1].name
-                          : 'The Bank'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className='flex flex-col items-center px-2'>
-                <div className='w-10 h-10 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center shadow-lg border border-slate-100 dark:border-slate-800'>
-                  <ArrowRight size={20} className='text-primary' />
-                </div>
-              </div>
-
-              {/* To Participant */}
-              <div className='flex flex-col items-center justify-center flex-1'>
-                <div className='flex flex-col items-center space-y-2'>
-                  <div
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black shadow-lg ${toStyle.bg} ${toStyle.shadow}`}>
-                    {transferType.endsWith('p1') ? (
-                      players[0].name.charAt(0)
-                    ) : transferType.endsWith('p2') ? (
-                      players[1].name.charAt(0)
-                    ) : (
-                      <Landmark size={24} />
-                    )}
-                  </div>
-                  <div className='text-center overflow-hidden w-full px-1'>
-                    <p
-                      className={`text-[10px] font-black uppercase truncate tracking-tight ${toStyle.text}`}>
-                      {transferType.endsWith('p1')
-                        ? players[0].name
-                        : transferType.endsWith('p2')
-                          ? players[1].name
-                          : 'The Bank'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {(transferType === 'bank-to-p1' || transferType === 'bank-to-p2') && (
-            <div className='mb-2'>
-              <button
-                onClick={() => {
-                  setAmount('200');
-                  setConfettiKey((prev) => prev + 1);
-                  setShowConfetti(true);
-                }}
-                className='w-full bg-primary hover:bg-primary/90 text-black py-4 rounded-2xl flex items-center justify-center space-x-3 shadow-[0_8px_20px_-4px_rgba(19,236,91,0.3)] active:scale-[0.98] transition-all group overflow-hidden relative'>
-                <div className='absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out'></div>
-                <Zap size={22} fill='currentColor' className='animate-pulse' />
-                <div className='flex flex-col items-start leading-tight'>
-                  <span className='text-[9px] font-black uppercase tracking-widest opacity-60'>
-                    Collect Bonus
-                  </span>
-                  <span className='text-sm font-black uppercase'>
-                    GO! Pass Start +200
-                  </span>
-                </div>
-              </button>
-            </div>
-          )}
-
-          <div>
-            <div className='bg-slate-50 dark:bg-slate-800/20 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden'>
-              <WheelPicker
-                options={[
-                  10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500
-                ]}
-                value={parseInt(amount) || 0}
-                onChange={(val: number) => setAmount(val.toString())}
-              />
-            </div>
-          </div>
-          <div className='relative pt-4'>
-            <label className='absolute top-0 left-1/2 -translate-x-1/2 text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] bg-white dark:bg-slate-900 px-4'>
-              Amount
-            </label>
-            <div className='bg-slate-50 dark:bg-slate-800/30 rounded-3xl border-2 border-slate-100 dark:border-slate-800 p-6'>
-              <input
-                autoFocus
-                type='number'
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder='0'
-                className='w-full text-5xl font-mono text-center bg-transparent border-none focus:ring-0 dark:text-white placeholder:text-slate-200 dark:placeholder:text-slate-800 font-bold'
-              />
-            </div>
-          </div>
-          <Button
-            onClick={handleTransfer}
-            size='xl'
-            className='w-full shadow-2xl shadow-primary/20 mt-2'>
-            Confirm Transfer
-          </Button>
-        </div>
-      </Modal>
+        transferType={transferType}
+        players={players}
+        onConfirm={handleConfirmTransfer}
+        onCollectBonus={() => {
+          setConfettiKey((prev) => prev + 1);
+          setShowConfetti(true);
+        }}
+      />
     </div>
   );
 };

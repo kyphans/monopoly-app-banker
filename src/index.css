@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@plugin "tailwindcss-animate";
 
 @theme {
   --color-primary: #13ec5b;
@@ -6,9 +8,11 @@
   --color-background-dark: #111821;
   --color-player-blue: #1d4ed8;
   --color-player-red: #be123c;
-  
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
 }
 
 @layer base {
@@ -22,21 +26,32 @@
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
-  
+
   .drag-vibe {
     animation: pulse-subtle 2.5s infinite ease-in-out;
   }
-  
+
   @keyframes pulse-subtle {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 0.9; transform: scale(1.08); }
+    0%,
+    100% {
+      opacity: 0.4;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.08);
+    }
   }
 
   .bank-ring {
-    box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.1), 0 10px 40px rgba(0, 0, 0, 0.2);
+    box-shadow:
+      0 0 0 8px rgba(255, 255, 255, 0.1),
+      0 10px 40px rgba(0, 0, 0, 0.2);
   }
 
   .dark .bank-ring {
-    box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.05), 0 10px 40px rgba(0, 0, 0, 0.4);
+    box-shadow:
+      0 0 0 8px rgba(255, 255, 255, 0.05),
+      0 10px 40px rgba(0, 0, 0, 0.4);
   }
 }
