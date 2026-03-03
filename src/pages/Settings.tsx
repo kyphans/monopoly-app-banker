@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../store/useGameStore';
-import { User, RefreshCw, Landmark } from 'lucide-react';
+import { User, RefreshCw, Landmark, FlipVertical2 } from 'lucide-react';
 import { PageHeader } from '../components/ui/PageHeader';
 
 const THEME_COLORS = [
@@ -58,6 +58,7 @@ export const Settings: React.FC<SettingsProps> = ({ onBack }) => {
     gameConfig,
     updatePlayerName,
     updateStartingCash,
+    toggleMirrorLayout,
     resetGame
   } = useGameStore();
 
@@ -114,6 +115,29 @@ export const Settings: React.FC<SettingsProps> = ({ onBack }) => {
                   onChange={(e) => updateStartingCash(Number(e.target.value))}
                 />
               </div>
+            </div>
+
+            <div className='flex items-center justify-between rounded-2xl bg-slate-50 px-5 py-4'>
+              <div className='flex items-center gap-3'>
+                <FlipVertical2 size={20} className='text-slate-400' strokeWidth={2.5} />
+                <div>
+                  <p className='text-sm font-bold text-slate-800'>Mirror Layout</p>
+                  <p className='text-xs text-slate-400'>
+                    {gameConfig.mirrorLayout ? 'Cards face each player' : 'Both cards face same way'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={toggleMirrorLayout}
+                className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors duration-200 ${
+                  gameConfig.mirrorLayout ? 'bg-primary' : 'bg-slate-200'
+                }`}>
+                <span
+                  className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                    gameConfig.mirrorLayout ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
             </div>
           </div>
         </section>

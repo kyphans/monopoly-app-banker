@@ -14,7 +14,7 @@ interface MainGameProps {
 }
 
 export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
-  const { players, transferMoney } = useGameStore();
+  const { players, gameConfig, transferMoney } = useGameStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [confettiKey, setConfettiKey] = useState(0);
@@ -37,17 +37,12 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
   }, []);
 
   useEffect(() => {
-    players.forEach((player) => {
-      if (player.balance < 0 && !isModalOpen) {
-        const confirmBankrupt = window.confirm(
-          `${player.name} has a negative balance ($${player.balance}). Do you want to declare BANKRUPTCY for this player?`
-        );
-        if (confirmBankrupt) {
-          onBankrupt(player.id);
-        }
-      }
-    });
-  }, [players, isModalOpen, onBankrupt]);
+    const bankrupt = players.find((p) => p.balance < 0);
+    if (bankrupt) {
+      onBankrupt(bankrupt.id);
+    }
+  }, [players, onBankrupt]);
+
   const [transferType, setTransferType] = useState<
     | 'bank-to-any'
     | 'any-to-bank'
@@ -161,34 +156,6 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
   };
 
   const handleConfirmTransfer = (value: number) => {
-    let sourcePlayerIdx = -1;
-    if (transferType.startsWith('p1')) sourcePlayerIdx = 0;
-    else if (transferType.startsWith('p2')) sourcePlayerIdx = 1;
-
-    if (sourcePlayerIdx !== -1) {
-      const sourcePlayer = players[sourcePlayerIdx];
-      const newBalance = sourcePlayer.balance - value;
-      if (newBalance < 0) {
-        const confirmBankrupt = window.confirm(
-          `${sourcePlayer.name} will have a negative balance ($${newBalance}). Do you want to declare BANKRUPTCY?`
-        );
-        if (confirmBankrupt) {
-          transferMoney(
-            transferType.startsWith('p1') ? 1 : 2,
-            transferType.endsWith('p1')
-              ? 1
-              : transferType.endsWith('p2')
-                ? 2
-                : 'bank',
-            value
-          );
-          onBankrupt(sourcePlayer.id);
-          setIsModalOpen(false);
-          return;
-        }
-      }
-    }
-
     if (transferType === 'p1-to-p2') transferMoney(1, 2, value);
     else if (transferType === 'p2-to-p1') transferMoney(2, 1, value);
     else if (transferType === 'p1-to-bank') transferMoney(1, 'bank', value);
@@ -203,7 +170,7 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
       setTimeout(
         () => setIsAnimatingTransfer(false),
         TRANSFER_ANIMATION_DURATION + 500
-      ); // Buffer for last money element
+      );
     }
 
     setIsModalOpen(false);
@@ -267,7 +234,7 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
 
       <PlayerArea
         player={players[0]}
-        reverse={true}
+        reverse={gameConfig.mirrorLayout}
         onDragStart={(e) => handleDragStart('p1', e)}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}

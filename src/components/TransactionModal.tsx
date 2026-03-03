@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal } from './ui/Modal';
-import { Landmark, ArrowRight, Zap } from 'lucide-react';
+import { Landmark, ArrowRight, Zap, AlertTriangle } from 'lucide-react';
 import { WheelPicker } from './ui/WheelPicker';
 import { Button } from './ui/Button';
 import { useSound } from '../hooks/useSound';
@@ -64,8 +64,15 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   onCollectBonus
 }) => {
   const [amount, setAmount] = useState('');
+  const [showBankruptcyPrompt, setShowBankruptcyPrompt] = useState(false);
   const playBonus = useSound('/cash.mp3');
   const playCounting = useSound('/counting.mp3');
+
+  const sourcePlayer = transferType.startsWith('p1')
+    ? players[0]
+    : transferType.startsWith('p2')
+      ? players[1]
+      : null;
 
   const getParticipantStyle = (isP1: boolean, isP2: boolean) => {
     if (isP1) return colorMap[players[0].color] || colorMap.blue;
@@ -89,10 +96,27 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const handleConfirm = () => {
     const value = parseInt(amount);
     if (!isNaN(value) && value > 0) {
+      if (sourcePlayer && sourcePlayer.balance - value < 0) {
+        setShowBankruptcyPrompt(true);
+        return;
+      }
       playCounting();
       onConfirm(value);
       setAmount('');
     }
+  };
+
+  const handleDeclareBankruptcy = () => {
+    const value = parseInt(amount);
+    playCounting();
+    onConfirm(value);
+    setAmount('');
+    setShowBankruptcyPrompt(false);
+  };
+
+  const handleClose = () => {
+    setShowBankruptcyPrompt(false);
+    onClose();
   };
 
   const handleBonusClick = () => {
@@ -104,8 +128,52 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const isBankToPlayer =
     transferType === 'bank-to-p1' || transferType === 'bank-to-p2';
 
+  const finalBalance = sourcePlayer
+    ? sourcePlayer.balance - (parseInt(amount) || 0)
+    : 0;
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title='Confirm Transaction'>
+    <Modal isOpen={isOpen} onClose={handleClose} title='Confirm Transaction'>
+      {showBankruptcyPrompt && sourcePlayer ? (
+        <div className='flex flex-col items-center gap-5 py-2'>
+          <div className='flex flex-col items-center gap-3'>
+            <div className='w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center'>
+              <AlertTriangle size={32} className='text-rose-500' />
+            </div>
+            <div className='text-center'>
+              <p className='text-[10px] font-black uppercase tracking-[0.2em] text-rose-500 mb-1'>
+                Insufficient Funds
+              </p>
+              <h3 className='text-xl font-black dark:text-white leading-tight'>
+                {sourcePlayer.name} will go{' '}
+                <span className='text-rose-500'>BANKRUPT</span>
+              </h3>
+            </div>
+          </div>
+
+          <div className='w-full bg-rose-500/5 border border-rose-500/20 rounded-3xl p-5 flex flex-col items-center gap-1'>
+            <p className='text-[10px] font-black uppercase tracking-widest text-rose-400/60'>
+              Final Balance
+            </p>
+            <p className='text-4xl font-black font-mono text-rose-500'>
+              ${finalBalance}
+            </p>
+          </div>
+
+          <div className='w-full flex flex-col gap-2'>
+            <button
+              onClick={handleDeclareBankruptcy}
+              className='w-full bg-rose-500 hover:bg-rose-600 text-white py-4 rounded-2xl font-black uppercase tracking-tight text-sm active:scale-[0.98] transition-all shadow-lg shadow-rose-500/20'>
+              Declare Bankruptcy
+            </button>
+            <button
+              onClick={() => setShowBankruptcyPrompt(false)}
+              className='w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-4 rounded-2xl font-black uppercase tracking-tight text-sm active:scale-[0.98] transition-all'>
+              Go Back
+            </button>
+          </div>
+        </div>
+      ) : (
       <div className='space-y-2'>
         <div>
           <div className='flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-4xl border border-slate-100 dark:border-slate-800 shadow-inner'>
@@ -223,6 +291,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
           Confirm Transfer
         </Button>
       </div>
+      )}
     </Modal>
   );
 };
