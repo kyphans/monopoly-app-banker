@@ -4,6 +4,43 @@ import { Landmark, ArrowRight, Zap, AlertTriangle } from 'lucide-react';
 import { WheelPicker } from './ui/WheelPicker';
 import { Button } from './ui/Button';
 import { useSound } from '../hooks/useSound';
+import { useGameStore } from '../store/useGameStore';
+
+const PRESET_OPTIONS = [10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500];
+
+const AmountGrid: React.FC<{ value: number; onChange: (v: number) => void }> = ({
+  value,
+  onChange
+}) => {
+  const max = PRESET_OPTIONS[PRESET_OPTIONS.length - 1];
+  const min = PRESET_OPTIONS[0];
+
+  return (
+    <div className='grid grid-cols-4 gap-2 p-3'>
+      {PRESET_OPTIONS.map((opt) => {
+        const ratio = (opt - min) / (max - min);
+        const isSelected = value === opt;
+        const alpha = 0.1 + ratio * 0.9;
+        return (
+          <button
+            key={opt}
+            onClick={() => onChange(opt)}
+            className='rounded-2xl py-3 font-black text-sm transition-all active:scale-95'
+            style={{
+              background: `rgba(19, 236, 91, ${alpha})`,
+              color: '#000',
+              boxShadow: isSelected
+                ? `0 0 0 2px #fff, 0 0 0 4px rgba(19,236,91,${alpha})`
+                : undefined,
+              transform: isSelected ? 'scale(1.05)' : undefined
+            }}>
+            ${opt}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
 
 interface Player {
   id: number;
@@ -67,6 +104,8 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const [showBankruptcyPrompt, setShowBankruptcyPrompt] = useState(false);
   const playBonus = useSound('/cash.mp3');
   const playCounting = useSound('/counting.mp3');
+  const { gameConfig } = useGameStore();
+  const isGridMode = gameConfig.amountInputMode === 'grid';
 
   const sourcePlayer = transferType.startsWith('p1')
     ? players[0]
@@ -258,13 +297,18 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 
         <div>
           <div className='bg-slate-50 dark:bg-slate-800/20 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden'>
-            <WheelPicker
-              options={[
-                10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500
-              ]}
-              value={parseInt(amount) || 0}
-              onChange={(val: number) => setAmount(val.toString())}
-            />
+            {isGridMode ? (
+              <AmountGrid
+                value={parseInt(amount) || 0}
+                onChange={(val) => setAmount(val.toString())}
+              />
+            ) : (
+              <WheelPicker
+                options={PRESET_OPTIONS}
+                value={parseInt(amount) || 0}
+                onChange={(val: number) => setAmount(val.toString())}
+              />
+            )}
           </div>
         </div>
 

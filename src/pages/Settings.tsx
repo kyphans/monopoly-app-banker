@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../store/useGameStore';
-import { User, RefreshCw, Landmark, FlipVertical2 } from 'lucide-react';
+import { User, RefreshCw, Landmark, FlipVertical2, LayoutGrid, SlidersHorizontal } from 'lucide-react';
 import { PageHeader } from '../components/ui/PageHeader';
 
 const THEME_COLORS = [
@@ -59,6 +59,7 @@ export const Settings: React.FC<SettingsProps> = ({ onBack }) => {
     updatePlayerName,
     updateStartingCash,
     toggleMirrorLayout,
+    toggleAmountInputMode,
     resetGame
   } = useGameStore();
 
@@ -138,6 +139,34 @@ export const Settings: React.FC<SettingsProps> = ({ onBack }) => {
                   }`}
                 />
               </button>
+            </div>
+
+            <div>
+              <label className='mb-2 block px-1 text-xs font-bold uppercase tracking-wider text-slate-500'>
+                Amount Input Style
+              </label>
+              <div className='flex rounded-2xl bg-slate-50 p-1.5 gap-1.5'>
+                <button
+                  onClick={() => gameConfig.amountInputMode !== 'wheel' && toggleAmountInputMode()}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-xs font-black uppercase tracking-wide transition-all ${
+                    gameConfig.amountInputMode === 'wheel'
+                      ? 'bg-white text-slate-800 shadow-sm'
+                      : 'text-slate-400'
+                  }`}>
+                  <SlidersHorizontal size={14} strokeWidth={2.5} />
+                  Scroll Wheel
+                </button>
+                <button
+                  onClick={() => gameConfig.amountInputMode !== 'grid' && toggleAmountInputMode()}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-xs font-black uppercase tracking-wide transition-all ${
+                    gameConfig.amountInputMode === 'grid'
+                      ? 'bg-white text-slate-800 shadow-sm'
+                      : 'text-slate-400'
+                  }`}>
+                  <LayoutGrid size={14} strokeWidth={2.5} />
+                  Grid
+                </button>
+              </div>
             </div>
           </div>
         </section>

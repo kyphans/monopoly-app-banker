@@ -12,6 +12,7 @@ interface Player {
 interface GameConfig {
   startingCash: number;
   mirrorLayout: boolean;
+  amountInputMode: 'wheel' | 'grid';
 }
 
 interface Transaction {
@@ -32,6 +33,7 @@ interface GameState {
   updatePlayerColor: (id: number, color: string) => void;
   updateStartingCash: (amount: number) => void;
   toggleMirrorLayout: () => void;
+  toggleAmountInputMode: () => void;
   resetGame: () => void;
   clearTransactions: () => void;
 }
@@ -46,6 +48,7 @@ export const useGameStore = create<GameState>()(
       gameConfig: {
         startingCash: 1500,
         mirrorLayout: false,
+        amountInputMode: 'wheel',
       },
       transactions: [],
       setBalance: (id, amount) => set((state) => ({
@@ -94,6 +97,12 @@ export const useGameStore = create<GameState>()(
       })),
       toggleMirrorLayout: () => set((state) => ({
         gameConfig: { ...state.gameConfig, mirrorLayout: !state.gameConfig.mirrorLayout }
+      })),
+      toggleAmountInputMode: () => set((state) => ({
+        gameConfig: {
+          ...state.gameConfig,
+          amountInputMode: state.gameConfig.amountInputMode === 'wheel' ? 'grid' : 'wheel',
+        }
       })),
       resetGame: () => set((state) => ({
         players: state.players.map(p => ({ ...p, balance: state.gameConfig.startingCash, lastChange: null })),
