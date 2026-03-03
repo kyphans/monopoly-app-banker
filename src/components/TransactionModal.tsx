@@ -3,6 +3,7 @@ import { Modal } from './ui/Modal';
 import { Landmark, ArrowRight, Zap } from 'lucide-react';
 import { WheelPicker } from './ui/WheelPicker';
 import { Button } from './ui/Button';
+import { useSound } from '../hooks/useSound';
 
 interface Player {
   id: number;
@@ -63,6 +64,8 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   onCollectBonus
 }) => {
   const [amount, setAmount] = useState('');
+  const playBonus = useSound('/cash.mp3');
+  const playCounting = useSound('/counting.mp3');
 
   const getParticipantStyle = (isP1: boolean, isP2: boolean) => {
     if (isP1) return colorMap[players[0].color] || colorMap.blue;
@@ -86,12 +89,14 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const handleConfirm = () => {
     const value = parseInt(amount);
     if (!isNaN(value) && value > 0) {
+      playCounting();
       onConfirm(value);
       setAmount('');
     }
   };
 
   const handleBonusClick = () => {
+    playBonus();
     setAmount('200');
     if (onCollectBonus) onCollectBonus();
   };

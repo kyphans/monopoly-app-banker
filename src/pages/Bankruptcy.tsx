@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGameStore } from '../store/useGameStore';
 import { User, X, RotateCcw, History as HistoryIcon } from 'lucide-react';
+import { useSound } from '../hooks/useSound';
 
 interface BankruptcyProps {
   playerId: number;
@@ -35,6 +36,11 @@ export const Bankruptcy: React.FC<BankruptcyProps> = ({
 }) => {
   const { players, transactions } = useGameStore();
   const player = players.find((p) => p.id === playerId) || players[0];
+  const playLosing = useSound('/losing.mp3');
+
+  useEffect(() => {
+    playLosing();
+  }, []);
   const colorId = player.color;
 
   const themeClass = THEME_COLORS[colorId] || THEME_COLORS.red;
