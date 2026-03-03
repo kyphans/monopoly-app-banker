@@ -48,7 +48,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className='h-dvh w-screen flex flex-col relative overflow-hidden font-sans bg-background-light dark:bg-background-dark'>
+    <div className='fixed inset-0 flex flex-col overflow-hidden font-sans bg-background-light dark:bg-background-dark'>
       {/* Top Navigation Overlay */}
       <div className='absolute top-[env(safe-area-inset-top)] w-full z-50 flex justify-between items-center py-2 px-4 pointer-events-none'>
         <button
