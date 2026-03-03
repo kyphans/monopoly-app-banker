@@ -43,7 +43,7 @@ export const Modal: React.FC<ModalProps> = ({
       onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className='absolute inset-0 bg-black/60 ios-blur' />
       <div
-        className={`relative bg-white dark:bg-slate-900 w-full h-[100dvh] md:h-auto md:max-w-sm rounded-none md:rounded-[2.5rem] shadow-2xl overflow-y-auto transition-transform duration-300 ${isOpen ? 'translate-y-0 md:scale-100' : 'translate-y-full md:translate-y-0 md:scale-90'}`}>
+        className={`relative bg-white dark:bg-slate-900 w-full h-[100svh] md:h-auto md:max-w-sm rounded-none md:rounded-[2.5rem] shadow-2xl overflow-y-auto transition-transform duration-300 ${isOpen ? 'translate-y-0 md:scale-100' : 'translate-y-full md:translate-y-0 md:scale-90'}`}>
         <div className='flex justify-between items-center p-4 md:pb-8'>
           <h3 className='text-md lg:text-xl font-bold dark:text-white'>
             {title}
