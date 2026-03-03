@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../store/useGameStore';
-import { User, RefreshCw, Landmark, FlipVertical2, LayoutGrid, SlidersHorizontal } from 'lucide-react';
+import {
+  User,
+  RefreshCw,
+  Landmark,
+  FlipVertical2,
+  LayoutGrid,
+  SlidersHorizontal
+} from 'lucide-react';
 import { PageHeader } from '../components/ui/PageHeader';
 
 const THEME_COLORS = [
@@ -86,7 +93,7 @@ export const Settings: React.FC<SettingsProps> = ({ onBack }) => {
   };
 
   return (
-    <div className='relative flex h-full w-full flex-col overflow-y-auto bg-primary font-sans text-slate-900 pb-32 pt-16 px-4'>
+    <div className='relative flex h-[100svh] w-full flex-col overflow-y-auto bg-primary font-sans text-slate-900 pb-32 pt-16 px-4'>
       <PageHeader title='Game Config' onBack={onBack} />
 
       <main className='flex-1 space-y-6 px-4 py-6'>
@@ -120,11 +127,19 @@ export const Settings: React.FC<SettingsProps> = ({ onBack }) => {
 
             <div className='flex items-center justify-between rounded-2xl bg-slate-50 px-5 py-4'>
               <div className='flex items-center gap-3'>
-                <FlipVertical2 size={20} className='text-slate-400' strokeWidth={2.5} />
+                <FlipVertical2
+                  size={20}
+                  className='text-slate-400'
+                  strokeWidth={2.5}
+                />
                 <div>
-                  <p className='text-sm font-bold text-slate-800'>Mirror Layout</p>
+                  <p className='text-sm font-bold text-slate-800'>
+                    Mirror Layout
+                  </p>
                   <p className='text-xs text-slate-400'>
-                    {gameConfig.mirrorLayout ? 'Cards face each player' : 'Both cards face same way'}
+                    {gameConfig.mirrorLayout
+                      ? 'Cards face each player'
+                      : 'Both cards face same way'}
                   </p>
                 </div>
               </div>
@@ -147,7 +162,10 @@ export const Settings: React.FC<SettingsProps> = ({ onBack }) => {
               </label>
               <div className='flex rounded-2xl bg-slate-50 p-1.5 gap-1.5'>
                 <button
-                  onClick={() => gameConfig.amountInputMode !== 'wheel' && toggleAmountInputMode()}
+                  onClick={() =>
+                    gameConfig.amountInputMode !== 'wheel' &&
+                    toggleAmountInputMode()
+                  }
                   className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-xs font-black uppercase tracking-wide transition-all ${
                     gameConfig.amountInputMode === 'wheel'
                       ? 'bg-white text-slate-800 shadow-sm'
@@ -157,7 +175,10 @@ export const Settings: React.FC<SettingsProps> = ({ onBack }) => {
                   Scroll Wheel
                 </button>
                 <button
-                  onClick={() => gameConfig.amountInputMode !== 'grid' && toggleAmountInputMode()}
+                  onClick={() =>
+                    gameConfig.amountInputMode !== 'grid' &&
+                    toggleAmountInputMode()
+                  }
                   className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-xs font-black uppercase tracking-wide transition-all ${
                     gameConfig.amountInputMode === 'grid'
                       ? 'bg-white text-slate-800 shadow-sm'

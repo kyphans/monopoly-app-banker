@@ -190,7 +190,7 @@ export const MainGame: React.FC<MainGameProps> = ({ onBankrupt }) => {
     : '';
 
   return (
-    <div className='flex-1 flex flex-col h-full bg-background-dark relative select-none'>
+    <div className='flex-1 flex flex-col h-[100svh] bg-background-dark relative select-none'>
       <Confetti
         key={confettiKey}
         width={windowSize.width}

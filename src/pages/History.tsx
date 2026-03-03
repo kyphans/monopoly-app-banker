@@ -43,7 +43,7 @@ export const History: React.FC<HistoryProps> = ({ onBack }) => {
   };
 
   return (
-    <div className='flex-1 flex flex-col h-full bg-primary dark:bg-[#0f151c] p-4 pt-16 overflow-y-auto'>
+    <div className='flex-1 flex flex-col h-[100svh] bg-primary dark:bg-[#0f151c] p-4 pt-16 overflow-y-auto'>
       <PageHeader title='Transaction History' onBack={onBack} />
 
       {/* Stats Section */}
